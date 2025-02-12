@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24C101" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Transaction" representedClassName="Transaction" syncable="YES" codeGenerationType="class" coreSpotlightDisplayNameExpression="merchantName">
+        <attribute name="amount" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" spotlightIndexingEnabled="YES"/>
+        <attribute name="category" optional="YES" attributeType="String" minValueString="0" spotlightIndexingEnabled="YES"/>
+        <attribute name="currency" attributeType="String" defaultValueString="CAD"/>
+        <attribute name="desc" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="location" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
+        <attribute name="merchantName" attributeType="String" spotlightIndexingEnabled="YES"/>
+        <attribute name="timestamp" attributeType="Date" usesScalarValueType="NO" spotlightIndexingEnabled="YES"/>
+        <fetchIndex name="byTimestampIndex">
+            <fetchIndexElement property="timestamp" type="Binary" order="descending"/>
+        </fetchIndex>
+        <fetchIndex name="byMerchantNameIndex">
+            <fetchIndexElement property="merchantName" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byCategoryIndex">
+            <fetchIndexElement property="category" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+</model>
