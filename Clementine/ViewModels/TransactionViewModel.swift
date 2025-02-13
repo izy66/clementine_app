@@ -63,6 +63,9 @@ class TransactionViewModel: ObservableObject {
                     try self.context.save()
                 }
                 
+                // Index the transaction for semantic search
+                persistenceController.indexTransaction(transaction)
+                
                 loadTransactions()
             } catch {
                 self.error = TransactionError.saveFailed(error.localizedDescription)
@@ -91,6 +94,31 @@ class TransactionViewModel: ObservableObject {
             // Refresh the context to ensure consistency
             context.rollback()
             loadTransactions()
+        }
+    }
+    
+    func updateTransaction(_ transaction: Transaction,
+                         merchantName: String,
+                         amount: Double,
+                         timestamp: Date,
+                         currency: String,
+                         location: String?,
+                         category: String?,
+                         description: String?) throws {
+        do {
+            try persistenceController.updateTransaction(
+                transaction,
+                merchantName: merchantName,
+                amount: amount,
+                timestamp: timestamp,
+                currency: currency,
+                location: location,
+                category: category,
+                description: description
+            )
+            loadTransactions()
+        } catch {
+            throw TransactionError.updateFailed(error.localizedDescription)
         }
     }
     

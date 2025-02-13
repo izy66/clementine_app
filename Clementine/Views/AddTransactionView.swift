@@ -17,6 +17,9 @@ struct AddTransactionView: View {
     @State private var validationMessage = ""
     @State private var isSaving = false
     
+    private let categories = ["Food", "Coffee", "Shopping", "Transportation", 
+                            "Entertainment", "Groceries", "Bills", "Other"]
+    
     var body: some View {
         NavigationView {
             Form {
@@ -47,16 +50,20 @@ struct AddTransactionView: View {
                         }
                     }
                     
-                    TextField("Location", text: $location)
+                    Picker("Category", selection: $category) {
+                        Text("None").tag("")
+                        ForEach(categories, id: \.self) { category in
+                            Text(category).tag(category)
+                        }
+                    }
                     
-                    TextField("Category", text: $category)
-                        .autocapitalization(.words)
+                    TextField("Location", text: $location)
                 }
                 
                 // Notes
                 Section(header: Text("Notes")) {
                     TextField("Description", text: $description, axis: .vertical)
-                        .lineLimit(3)
+                        .lineLimit(3, reservesSpace: true)
                 }
             }
             .navigationTitle("Add Transaction")

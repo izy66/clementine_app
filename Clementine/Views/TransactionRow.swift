@@ -1,69 +1,70 @@
 import SwiftUI
 
 struct TransactionRow: View {
+    @ObservedObject var viewModel: TransactionViewModel
     let transaction: Transaction
+    @State private var showingEditSheet = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        Button(action: { showingEditSheet = true }) {
             HStack {
-                // Amount and merchant name
-                Text(transaction.merchantName ?? "Unknown Merchant")
-                    .font(.headline)
-                Spacer()
-                Text(formattedAmount)
-                    .bold()
-                    .foregroundColor(amountColor)
-            }
-            
-            HStack {
-                // Category
-                if let category = transaction.category {
-                    CategoryPill(name: category)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(transaction.merchantName ?? "Unknown Merchant")
+                        .font(.headline)
+                    
+                    if let category = transaction.category {
+                        Text(category)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    if let description = transaction.desc, !description.isEmpty {
+                        Text(description)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                    }
                 }
                 
                 Spacer()
                 
-                // Date and location
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text(formattedDate)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(formatAmount(transaction.amount, currency: transaction.currency ?? "CAD"))
+                        .font(.headline)
                     
-                    if let location = transaction.location {
+                    if let date = transaction.timestamp {
+                        Text(formatDate(date))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    if let location = transaction.location, !location.isEmpty {
                         Text(location)
-                            .font(.caption2)
+                            .font(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
             }
-            
-            if let description = transaction.desc {
-                Text(description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-            }
+            .contentShape(Rectangle())
         }
-        .padding(.vertical, 4)
+        .buttonStyle(.plain)
+        .sheet(isPresented: $showingEditSheet) {
+            EditTransactionView(viewModel: viewModel, transaction: transaction)
+        }
     }
     
-    private var formattedAmount: String {
+    private func formatAmount(_ amount: Double, currency: String) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.currencyCode = transaction.currency ?? "CAD"
-        return formatter.string(from: NSNumber(value: transaction.amount)) ?? String(format: "%.2f", transaction.amount)
+        formatter.currencyCode = currency
+        return formatter.string(from: NSNumber(value: amount)) ?? String(format: "%.2f", amount)
     }
     
-    private var formattedDate: String {
-        guard let date = transaction.timestamp else { return "Unknown Date" }
+    private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter.string(from: date)
-    }
-    
-    private var amountColor: Color {
-        transaction.amount < 0 ? .red : .green
     }
 }
 

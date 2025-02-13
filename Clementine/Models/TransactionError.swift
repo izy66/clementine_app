@@ -10,6 +10,7 @@ enum TransactionError: LocalizedError {
     case loadFailed(String)
     case invalidData(String)
     case unknown(String)
+    case updateFailed(String)
     
     var errorDescription: String? {
         switch self {
@@ -36,6 +37,8 @@ enum TransactionError: LocalizedError {
             return "Invalid data: \(message)"
         case .unknown(let message):
             return "An unknown error occurred: \(message)"
+        case .updateFailed(let message):
+            return "Failed to update transaction: \(message)"
         }
     }
     
@@ -55,6 +58,8 @@ enum TransactionError: LocalizedError {
             return "Please check your input and try again"
         case .unknown:
             return "Please try again or contact support if the problem persists"
+        case .updateFailed:
+            return "Please check your input and try again. The transaction may have been modified by another process"
         }
     }
     
@@ -73,6 +78,8 @@ enum TransactionError: LocalizedError {
         case .invalidData(let message):
             return message
         case .unknown(let message):
+            return message
+        case .updateFailed(let message):
             return message
         }
     }

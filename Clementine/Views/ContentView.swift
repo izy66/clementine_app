@@ -6,6 +6,30 @@ struct ContentView: View {
     @State private var searchText = ""
     
     var body: some View {
+        TabView {
+            TransactionsTab(viewModel: viewModel, 
+                          showingAddTransaction: $showingAddTransaction,
+                          searchText: $searchText)
+                .tabItem {
+                    Label("Transactions", systemImage: "list.bullet")
+                }
+            
+            NavigationView {
+                SpendingAnalysisView(viewModel: viewModel)
+            }
+            .tabItem {
+                Label("Analysis", systemImage: "chart.pie")
+            }
+        }
+    }
+}
+
+struct TransactionsTab: View {
+    @ObservedObject var viewModel: TransactionViewModel
+    @Binding var showingAddTransaction: Bool
+    @Binding var searchText: String
+    
+    var body: some View {
         NavigationView {
             VStack(spacing: 0) {
                 if !viewModel.transactions.isEmpty {
@@ -43,7 +67,7 @@ struct ContentView: View {
                         .padding()
                     } else {
                         ForEach(viewModel.transactions) { transaction in
-                            TransactionRow(transaction: transaction)
+                            TransactionRow(viewModel: viewModel, transaction: transaction)
                                 .swipeActions(edge: .trailing) {
                                     Button(role: .destructive) {
                                         deleteTransaction(transaction)
@@ -111,7 +135,7 @@ struct StatisticsView: View {
     private func formatAmount(_ amount: Double) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
+        formatter.currencyCode = "CAD"
         return formatter.string(from: NSNumber(value: amount)) ?? String(format: "%.2f", amount)
     }
 }
